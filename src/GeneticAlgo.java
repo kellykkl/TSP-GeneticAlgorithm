@@ -178,95 +178,95 @@ public class GeneticAlgo implements ActionListener, Runnable, ChangeListener{
 
 	private void step() {
 		
-		if (now_iter < iter) {
-			for (int i=0; i<p; i++) {
-				
-				//cast ArrayList<Double> to Double[]
-				Double[] target = new Double[map_points];
-				for (int j = 0; j < target.length; j++) {
-				   target[j] = (Double) pop_key.get(i)[j];                
-				}
-				
-			    Decoder comparator = new Decoder(target);
-			    Integer[] indexes = comparator.createIndexArray();
-			    Arrays.sort(indexes, comparator);
-			    //System.out.println(Arrays.toString(indexes));
-			    pop_fitness[i] = get_fitness(indexes);		    
-			}
-		    
-		    //Can also use decoder here (0 is shortest distance, fittest)
-		    Decoder comparator1 = new Decoder(pop_fitness);
-		    Integer[] fitness_index = comparator1.createIndexArray();
-		    Arrays.sort(fitness_index, comparator1);
-		    //System.out.println(Arrays.toString(pop_fitness));
-		    //System.out.println(Arrays.toString(fitness_index));
-		    
-		    
-		    //partition population into elite and non-elite
-		    int elite_up_to = (int) Math.round(elite_proportion*p);
-		    ArrayList<Object[]> elite_pop = new ArrayList<Object[]>();
-		    ArrayList<Object[]> non_elite_pop = new ArrayList<Object[]>();
-			Double[] fittest = new Double[map_points];
-		    
-		    
-		    for (int i=0; i<elite_up_to; i++) {
-		    	elite_pop.add(pop_key.get(fitness_index[i]));
-		    	if (i==0) {
-	    			System.out.println(pop_fitness[fitness_index[i]]);
-	    			length.setText(String.valueOf(pop_fitness[fitness_index[i]]));
-		    		for (int j=0; j<map_points; j++) {
-		    			fittest[j] = (Double) pop_key.get(fitness_index[0])[j];
-		    		}
-		    	}
-		    }
-		    for (int i=elite_up_to; i<p; i++) {
-		    	non_elite_pop.add(pop_key.get(fitness_index[i]));
-		    }
-		    
 
-		    //plot best solution
-		    Decoder comparator2 = new Decoder(fittest);
-		    Integer[] best_route = comparator2.createIndexArray();
-		    Arrays.sort(best_route, comparator2);
-		    //System.out.println(Arrays.toString(best_route));	    
-		    map.setSolution(best_route);
-			frame.repaint();	    
-		    
-		    
-		    //add all elites to next generation
-		   for (int i=0; i<elite_pop.size(); i++) {
-			   pop_key.set(i, elite_pop.get(i));
-		   }
-		   
-		   //add mutants
-		   int no_mutants = (int) Math.round(mutant_proportion*p);
-		   for (int i=0; i<no_mutants; i++) {
-			   ArrayList<Double> mutant = init_key(map_points);
-			   pop_key.set(i+elite_pop.size(), mutant.toArray());
-		   }
-		   
-		   //add children
-		   for (int i=elite_pop.size() + no_mutants; i<pop_key.size(); i++) {
-			   //choose parent from elite pop at random
-			   Random r = new Random();
-			   ArrayList<Double> child = new ArrayList<Double>();
-			   Object[] parent_elite = elite_pop.get(r.nextInt(elite_pop.size()));
-			   //choose parent from non-elite pop at random
-			   Object[] parent_nonelite = non_elite_pop.get(r.nextInt(non_elite_pop.size()));
-			   //mate
-			   for (int j=0; j<map_points; j++) {
-				   boolean elite = (r.nextDouble() < biasedness);
-				   if (elite == true) {
-					   child.add((Double) parent_elite[j]);
-				   }else {
-					   child.add((Double) parent_nonelite[j]);
-				   }
-			   }
-			   pop_key.set(i, child.toArray());
-		   }
-		   
-		   now_iter += 1;
+		for (int i=0; i<p; i++) {
+			
+			//cast ArrayList<Double> to Double[]
+			Double[] target = new Double[map_points];
+			for (int j = 0; j < target.length; j++) {
+			   target[j] = (Double) pop_key.get(i)[j];                
+			}
+			
+		    Decoder comparator = new Decoder(target);
+		    Integer[] indexes = comparator.createIndexArray();
+		    Arrays.sort(indexes, comparator);
+		    //System.out.println(Arrays.toString(indexes));
+		    pop_fitness[i] = get_fitness(indexes);		    
 		}
+	    
+	    //Can also use decoder here (0 is shortest distance, fittest)
+	    Decoder comparator1 = new Decoder(pop_fitness);
+	    Integer[] fitness_index = comparator1.createIndexArray();
+	    Arrays.sort(fitness_index, comparator1);
+	    //System.out.println(Arrays.toString(pop_fitness));
+	    //System.out.println(Arrays.toString(fitness_index));
+	    
+	    
+	    //partition population into elite and non-elite
+	    int elite_up_to = (int) Math.round(elite_proportion*p);
+	    ArrayList<Object[]> elite_pop = new ArrayList<Object[]>();
+	    ArrayList<Object[]> non_elite_pop = new ArrayList<Object[]>();
+		Double[] fittest = new Double[map_points];
+	    
+	    
+	    for (int i=0; i<elite_up_to; i++) {
+	    	elite_pop.add(pop_key.get(fitness_index[i]));
+	    	if (i==0) {
+    			System.out.println(pop_fitness[fitness_index[i]]);
+    			length.setText(String.valueOf(pop_fitness[fitness_index[i]]));
+	    		for (int j=0; j<map_points; j++) {
+	    			fittest[j] = (Double) pop_key.get(fitness_index[0])[j];
+	    		}
+	    	}
+	    }
+	    for (int i=elite_up_to; i<p; i++) {
+	    	non_elite_pop.add(pop_key.get(fitness_index[i]));
+	    }
+	    
+
+	    //plot best solution
+	    Decoder comparator2 = new Decoder(fittest);
+	    Integer[] best_route = comparator2.createIndexArray();
+	    Arrays.sort(best_route, comparator2);
+	    //System.out.println(Arrays.toString(best_route));	    
+	    map.setSolution(best_route);
+		frame.repaint();	    
+	    
+	    
+	    //add all elites to next generation
+	   for (int i=0; i<elite_pop.size(); i++) {
+		   pop_key.set(i, elite_pop.get(i));
+	   }
+	   
+	   //add mutants
+	   int no_mutants = (int) Math.round(mutant_proportion*p);
+	   for (int i=0; i<no_mutants; i++) {
+		   ArrayList<Double> mutant = init_key(map_points);
+		   pop_key.set(i+elite_pop.size(), mutant.toArray());
+	   }
+	   
+	   //add children
+	   for (int i=elite_pop.size() + no_mutants; i<pop_key.size(); i++) {
+		   //choose parent from elite pop at random
+		   Random r = new Random();
+		   ArrayList<Double> child = new ArrayList<Double>();
+		   Object[] parent_elite = elite_pop.get(r.nextInt(elite_pop.size()));
+		   //choose parent from non-elite pop at random
+		   Object[] parent_nonelite = non_elite_pop.get(r.nextInt(non_elite_pop.size()));
+		   //mate
+		   for (int j=0; j<map_points; j++) {
+			   boolean elite = (r.nextDouble() < biasedness);
+			   if (elite == true) {
+				   child.add((Double) parent_elite[j]);
+			   }else {
+				   child.add((Double) parent_nonelite[j]);
+			   }
+		   }
+		   pop_key.set(i, child.toArray());
+	   }
+	   
+	   now_iter += 1;
+
 
 	   
 	}
